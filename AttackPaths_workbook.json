@@ -1,0 +1,180 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# Microsoft Defender For Cloud: Attack Paths\n---\nAttack path analysis helps you to address the security issues that pose immediate threats with the greatest potential of being exploited in your environment. Defender for Cloud analyzes which security issues are part of potential attack paths that attackers could use to breach your environment. "
+      },
+      "name": "text - 2"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "securityresources \n| where type =='microsoft.security/attackpaths' \n| summarize count()",
+        "size": 3,
+        "title": "Attack Paths",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources",
+        "crossComponentResources": [
+          "value::all"
+        ],
+        "visualization": "tiles",
+        "tileSettings": {
+          "titleContent": {
+            "columnMatch": "count_",
+            "formatter": 12,
+            "formatOptions": {
+              "palette": "blue"
+            }
+          },
+          "showBorder": false
+        }
+      },
+      "customWidth": "15",
+      "name": "query - 2"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "securityresources \n| where type =='microsoft.security/attackpaths' \n| extend RiskLevel = properties.riskLevel\n| summarize count() by tostring(RiskLevel)\n",
+        "size": 3,
+        "title": "Attack Paths by Risk Levels",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources",
+        "crossComponentResources": [
+          "value::all"
+        ],
+        "visualization": "piechart",
+        "chartSettings": {
+          "seriesLabelSettings": [
+            {
+              "seriesName": "High",
+              "color": "redBright"
+            },
+            {
+              "seriesName": "Critical",
+              "color": "red"
+            }
+          ]
+        }
+      },
+      "customWidth": "25",
+      "name": "query - 4"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "securityresources \n| where type =='microsoft.security/attackpaths' \n| extend EntryPointName = properties.entryPoint.entityName\n| summarize count() by tostring(EntryPointName)\n| order by count_ desc",
+        "size": 0,
+        "title": "Attack Paths by EntryPoint",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources",
+        "crossComponentResources": [
+          "value::all"
+        ],
+        "visualization": "barchart",
+
+      },
+      "customWidth": "30",
+      "name": "query - 4"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "securityresources \n| where type =='microsoft.security/attackpaths' \n| extend TargetPointName = properties.target.entityName\n| summarize count() by tostring(TargetPointName)\n| order by count_ desc",
+        "size": 0,
+        "title": "Attack Path by Target",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources",
+        "crossComponentResources": [
+          "value::all"
+        ],
+        "visualization": "barchart"
+      },
+      "customWidth": "30",
+      "name": "query - 5"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "securityresources \n| where type =='microsoft.security/attackpaths' \n| extend Description = properties.description\n| extend Name = properties.displayName\n| extend RiskFactors = properties.riskFactors\n| extend Remediation = properties.manualRemediationSteps\n| extend RiskLevel = properties.riskLevel\n| extend AttackPathID = properties.attackPathId\n| extend AttackPathStory = properties.attackStory\n| extend EntryPointType = properties.entryPoint.entityType\n| extend EntryPointName = properties.entryPoint.entityName\n| extend TargetPointType = properties.target.entityType\n| extend TargetPointName = properties.target.entityName\n| project AttackPathID, Name, Description, RiskLevel,RiskFactors,EntryPointName,EntryPointType,TargetPointName,TargetPointType,Remediation,tenantId\n//| summarize count() by tostring(RiskLevel)",
+        "size": 0,
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources",
+        "crossComponentResources": [
+          "value::all"
+        ],
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "RiskLevel",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Critical",
+                    "representation": "red",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "High",
+                    "representation": "redBright",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Medium",
+                    "representation": "orange",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Low",
+                    "representation": "yellow",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "gray",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "EntryPointType",
+              "formatter": 16,
+              "formatOptions": {
+                "showIcon": true
+              }
+            },
+            {
+              "columnMatch": "TargetPointType",
+              "formatter": 16,
+              "formatOptions": {
+                "showIcon": true
+              }
+            }
+          ]
+        }
+      },
+      "name": "query - 1"
+    }
+  ],
+  "fallbackResourceIds": [
+    ""
+  ],
+  "fromTemplateId": "sentinel-UserWorkbook",
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
